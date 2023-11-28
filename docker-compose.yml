@@ -1,0 +1,53 @@
+version: '2.4'
+
+services:
+  mqtt-handler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: mqttHandler
+    image: mqtt-handler:latest
+    depends_on:
+      - redis
+      - emqx-broker
+    environment:
+      - MQTT_BROKER_HOST=mqtt-broker
+      - MQTT_TOPIC=sensor/speed
+      - REDIS_HOST=redis
+    networks:
+      - emotorad
+
+  http-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: httpHandler
+    image: http-server:latest
+    depends_on:
+      - redis
+    ports:
+      - "4000:4000"
+    environment:
+      - REDIS_HOST=redis
+    networks:
+      - emotorad
+  redis:
+    image: redis:latest
+    hostname: redis
+    networks:
+      - emotorad
+  emqx-broker:
+    image: emqx/emqx:latest
+    container_name: mqtt-broker
+    hostname: mqtt-broker
+    environment:
+      - "EMQX_NAME=mqtt-broker"
+      - "EMQX_HOST=mqtt-broker"
+    ports:
+      - "1883:1883"
+    networks:
+      - emotorad
+
+
+networks:
+  emotorad:
