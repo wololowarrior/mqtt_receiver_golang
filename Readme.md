@@ -10,7 +10,8 @@
   2. Using that token, we can `GET` the latest speed from redis.
 
 ### Api Flow
-See the api flow ![here](./images/api_flow.PNG)
+
+See the api flow ![here](./images/api_flow.png)
 
 ### Running the deployment
 1. Using the docker compose file we'll bring up the topology. First time the docker will build the images.
