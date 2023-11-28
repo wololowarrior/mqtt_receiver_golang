@@ -10,7 +10,7 @@
   2. Using that token, we can `GET` the latest speed from redis.
 
 ### Api Flow
-See the api flow ![here](images/api_flow.PNG)
+See the api flow ![here](./images/api_flow.PNG)
 
 ### Running the deployment
 1. Using the docker compose file we'll bring up the topology. First time the docker will build the images.
@@ -21,7 +21,7 @@ See the api flow ![here](images/api_flow.PNG)
 3. Start the http server and mqtt handler using `docker-compose up mqtt-handler http-server -d`.
 4. See for ref. 
 
-    ![this](images/dc_start_flow.png)  
+    ![this](./images/dc_start_flow.png)  
 
 ### Running tests
 1. Using mosquitto_pub to publish messages to the topic
