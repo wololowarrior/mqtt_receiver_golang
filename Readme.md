@@ -11,7 +11,7 @@
 
 ### Api Flow
 
-See the api flow ![here](https://raw.githubusercontent.com/wololowarrior/mqtt_receiver_golang/blob/main/images/api_flow.png)
+See the api flow ![here](https://raw.githubusercontent.com/wololowarrior/mqtt_receiver_golang/main/images/api_flow.png)
 
 ### Running the deployment
 1. Using the docker compose file we'll bring up the topology. First time the docker will build the images.
