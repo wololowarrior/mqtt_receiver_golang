@@ -25,27 +25,33 @@ See the api flow ![here](./images/api_flow.png)
     ![this](./images/dc_start_flow.png)  
 
 ### Running tests
-1. Using mosquitto_pub to publish messages to the topic
-2. Publish a speed update to the broker: 
+1. Getting the JWT token:
     ```shell
-     mosquitto_pub -h localhost -p 1883 -t "sensor/speed" -m "{\"speed\":10}"
-    ```
-3. Getting the JWT token:
-    ```shell
-    hgupta@Harshils-MacBook-Pro mqtt_receiver % curl --location 'localhost:4000/token' \                                                                                      
+    curl --location 'localhost:4000/token' \                                                                                      
     --header 'Content-Type: application/json' \
     --data-raw '{
     "email": "h@g.com"
     }' | jq .token
+    ```
+   Response
+   ```text
     % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
     Dload  Upload   Total   Spent    Left  Speed
     100   189  100   165  100    24  15231   2215 --:--:-- --:--:-- --:--:-- 31500
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhAZy5jb20iLCJleHAiOjE3MDExNjcxNjMsImlhdCI6MTcwMTE2Njg2M30.S9hZwqqzFSl5Z8QOVeAjA68Di_vd7fDqTkgnS7nxgsE"
     ```
+
+2. Using mosquitto_pub to publish messages to the topic
+3. Publish a speed update to the broker:
+    ```shell
+     mosquitto_pub -h localhost -p 1883 -t "sensor/speed" -m "{\"speed\":10}"
+    ```
 4. Get the speed. Copy the token from above and insert it below:
     ```shell
-    hgupta@Harshils-MacBook-Pro mqtt_receiver % curl --location 'localhost:4000/speed' \
+    curl --location 'localhost:4000/speed' \
     --header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhAZy5jb20iLCJleHAiOjE3MDExNjcxNjMsImlhdCI6MTcwMTE2Njg2M30.S9hZwqqzFSl5Z8QOVeAjA68Di_vd7fDqTkgnS7nxgsE'
-    {"speed":"10"}
-
+   ```
+   Response
+   ```text
+   {"speed":"10"}
     ```
