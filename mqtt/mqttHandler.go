@@ -14,6 +14,8 @@ import (
 
 var redisClient *redis.Client
 
+const redisSpeedKey = "speed_new"
+
 func init() {
 	redisHost := os.Getenv("REDIS_HOST")
 	redisClient = redis.NewClient(&redis.Options{
@@ -37,7 +39,7 @@ func onMessageReceived(client mqtt.Client, message mqtt.Message) {
 	}
 
 	// Update Redis with the latest speed
-	if err := redisClient.Set(context.Background(), "latest_speed", speed, 0).Err(); err != nil {
+	if err := redisClient.Set(context.Background(), redisSpeedKey, speed, 0).Err(); err != nil {
 		log.Printf("Error updating Redis: %v", err)
 	}
 }
@@ -45,9 +47,8 @@ func onMessageReceived(client mqtt.Client, message mqtt.Message) {
 func main() {
 	brokerHost := os.Getenv("MQTT_BROKER_HOST")
 	topic := os.Getenv("MQTT_TOPIC")
-	fmt.Printf(fmt.Sprintf("tcp://%s:1883\n", brokerHost))
 	opts := mqtt.NewClientOptions().AddBroker(fmt.Sprintf("tcp://%s:1883", brokerHost))
-	opts.SetClientID("mqtt-to-redis-client")
+	opts.SetClientID("redis-client")
 
 	client := mqtt.NewClient(opts)
 
@@ -59,8 +60,8 @@ func main() {
 		log.Fatalf("Error subscribing to MQTT topic: %v", token.Error())
 	}
 
-	fmt.Println("MQTT to Redis bridge is running. Press Ctrl+C to exit.")
-
+	fmt.Println("MQTT to Redis is running.")
+	// enter in a loop and not terminate. To allow the program to receive as many requests.
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt)
 

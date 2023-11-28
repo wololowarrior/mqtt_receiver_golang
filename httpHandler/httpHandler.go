@@ -16,6 +16,7 @@ import (
 var redisClient *redis.Client
 
 const secret = "secret-shh"
+const redisSpeedKey = "speed_new"
 
 func init() {
 	redisHost := os.Getenv("REDIS_HOST")
@@ -83,16 +84,14 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	claims, ok := token.Claims.(*TokenClaims)
+	_, ok := token.Claims.(*TokenClaims)
 	if !ok || !token.Valid {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
 
-	fmt.Printf("%v %v", claims.Email, claims.StandardClaims.ExpiresAt)
-
 	// Retrieve the latest speed from Redis
-	val, err := redisClient.Get(r.Context(), "latest_speed").Result()
+	val, err := redisClient.Get(r.Context(), redisSpeedKey).Result()
 	if err == redis.Nil {
 		http.Error(w, "No data in Redis", http.StatusNotFound)
 		return
@@ -107,8 +106,8 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/", postHandler).Methods("POST")
-	r.HandleFunc("/", getHandler).Methods("GET")
+	r.HandleFunc("/token", postHandler).Methods("POST")
+	r.HandleFunc("/speed", getHandler).Methods("GET")
 
 	fmt.Println("Server is running on :4000")
 	log.Fatal(http.ListenAndServe(":4000", r))
